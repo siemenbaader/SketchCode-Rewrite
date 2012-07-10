@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title> SketchCode </title>
+    <script src="jquery-1.4.4.js"></script>
+    <script src="underscore.js"></script>
+    <script src="helpers.js"></script> 
+    <script src='rangy-1.0b1/rangy-core.js'></script>
+    <script src='rangy-1.0b1/rangy-selectionsaverestore.js'></script>
+
+    <script src="editor.js"></script>
+    <link rel="stylesheet" type="text/css" href="editor.css" />
+
+    <link rel="stylesheet" type="text/css" href="intention-interaction-window.css" />
+
+    <link rel="stylesheet" type="text/css" href="sketchcode.css" />
+
+  
+  </head>
+
+  <body>
+
+    <editor id="code"></editor>
+
+
+    <script>
+
+var intentions = [DeclarationAssignment, VarText, Comment ];
+
+var code_editor = Editor($("#code")[0], intentions);
+
+
+// Control: this outer layer only wires together actions. The editor itself
+// is responsible for serializing and de-serializing rich objects.
+
+
+var file_URL = new URL(window.location.href).query_string();
+document.title = file_URL;
+
+if (file_URL === "") {
+  window.location.href = window.location.href + '?tutorial.sc';
+} else if (file_URL.ends_with('.sc')) {     // SC file
+  var loaded = get(new URL(file_URL));
+
+  code_editor.set_content( loaded );
+} else if (!(URL(file_URL + '.sc')).exists() ) { //Import file if not exists
+    var loaded_text = get(new URL(file_URL));
+    code_editor.import_plain_text( loaded_text );
+    var sketchcode_filename = file_URL + '.sc';
+
+    put(new URL(sketchcode_filename), code_editor.get_content() );
+    window.location.href = window.location.href + '.sc';   // redirect to converted file
+  
+} else {
+  window.location.href = window.location.href + '.sc';   // redirect to 
+}
+
+
+window.setTimeout( function() {code_editor.focus();}, 0)
+
+document.onkeydown = function (ev) {
+  if (ev.keyIdentifier === "Enter" && ev.ctrlKey) {
+    ev.preventDefault();
+    eval(code_editor.to_js() );
+    return;
+  };
+  
+  if (ev.keyIdentifier === "U+0053" && (ev.ctrlKey || ev.metaKey)) {  // Ctrl + s
+    
+    // Save file
+    put(new URL(file_URL), code_editor.get_content() );
+
+
+    // Compile resulting file
+    put(new URL(file_URL.slice(0, -3)), code_editor.to_js() );
+   
+    ev.preventDefault();
+  }
+};
+
+
+
+    </script>
+
+   <script>
+
+// constructs a DOM node and appebds it to the intention. removes on close.
+var IntentionInteractionWindowEditor = function( intention ) {
+  var self = Node("<intention_interaction_window/>", "");
+  
+  var close = Node("<close_button/>", "[X]");
+
+  self.close = function() { intention.removeChild( self ); }
+  close.onclick = function() { intention.removeChild( self ); };
+  self.appendChild( close );
+
+  self.appendChild( Node("<header/>", "Setup"));
+  self.appendChild( Node("<editor/>", "var a = 99;"));
+
+  self.appendChild( Node("<header/>", "Intention"));
+  var ed = Node("<editor/>", '' );
+//   ed.appendChild( intention );
+  self.appendChild( Node("<editor/>", '' ));
+
+  self.appendChild( Node("<header/>", "Interact"));
+  var repl = Node("<repl/>", "");
+  repl.appendChild( Node("<editor/>", 'log(hello)'));
+  repl.appendChild( Node("<output/>", '"hello"'));
+  self.appendChild( repl );
+
+
+  intention.appendChild( self );
+  return self;
+}
+
+// i = IntentionInteractionWindowEditor( app );
+// Intention
+// var intention = DeclarationAssignment.Entity().view;
+
+
+// var popup = IntentionInteractionWindowEditor( intention );
+
+
+</script>
+
+  </body>
+</html>
