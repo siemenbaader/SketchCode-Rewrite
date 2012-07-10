@@ -24,10 +24,10 @@ dropdown_menu function b { color: black; }
 
 #editor { border: 1px dotted black; }
 
-function, declaration-assignment { cursor: default; width: 35em; }
+function, declaration-assignment { cursor: default; }
 function b { color: #ff9966; }
 function:hover, declaration-assignment:hover { outline: 1px dotted gray; }
-declaration-assignment { border: 2px solgid red; display: block; }
+declaration-assignment { border: 2px solid red; display: inline-block; }
 declaration-assignment b { color: #99cc00; }
 field {/*outline: 1px solid #BCF;*/ background-color: #444;  display: inline-block; vertical-align: top; min-width: 10px; min-height: 16px; cursor: text; color:#3399cc; }
 field:hover { outline: 2px solid #BCF; } 
