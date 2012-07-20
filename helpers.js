@@ -108,6 +108,14 @@ function l(data) {
   return data;
 }
 
+function beep( element ) {
+  var beeper = $("<div style='position: absolute; background-color: red;'/>")
+  beeper.offset( $(element).offset() ).height( $(element).height() ).width( $(element).width() )  ;
+
+  $('body').append(beeper)
+  window.setTimeout( function(){ beeper.remove(); }, 100 )
+}
+
 RegExp.escape = function(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 }

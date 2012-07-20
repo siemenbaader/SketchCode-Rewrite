@@ -1,0 +1,73 @@
+SketchCode Coding Document
+==========================
+
+
+Capture (unsorted)
+==================
+- must distinguish between non-editable elements & non-removeable elements from editor
+- document cursor APIs & blog about contenteditable code editor
+
+
+
+Actions
+=======
+- code editor love:
+  - BSP key in fields
+    - fix selection deletion & first ev  OK
+    - BSP on empty line must remove line break & go up to prev line  OK
+    - DEL at end of field must not go into next field OK
+    - in menu mode, backspace & DEL mustrespect fields as well  OK
+    - DEL & BSP outside a concept & no selection must select it
+      - then, del & BSP will just remove it
+
+    - clean up the visuals of TAG & refactor the Concept CSS
+
+
+  - arrow key navigation & columns
+    - selection should not be able to leave an editable field
+- set up iTerm
+- overview of jQuery (briefly)
+
+Issues
+======
+- add final spacer is buggy and adds endlessly
+  - check if cursor at EOL in element, then just add 2x BR tag
+  - Node.has_line_breaks(): check for inlined brs or 2x at end
+  - backspace removes a trailing BR & the next non-semantics field. remove BR like a normal char.
+
+- Editor love: add backspace del prevention in fields
+
+
+BR vs DIV desing decision
+=========================
+- copy & paste problems
+- br insertion
+
+
+
+Editor love - identified issues that are no show-stoppers
+=========================================================
+- click right of rich widget must put the cursor to the end of line  OK
+  works for comment, but only inline
+- arrow left inside rich widget must put the cursor left of widget
+- cursor left at col 0 beneath rich widget must put the cursor to end of one above
+  (works for comment, not DeclAssign) 
+- backspace on line above comment must move comment up to that linetextedi
+- var must be an inline element; i.e. curser must be able to move left & right of it
+- cursor in fields in concept must be able to go up to line above
+- BSP at the end of a concept must not continue into the fields, but DEL the entire concept
+  - select into a concept must select the entire concept as a whole
+
+- cursor to the very left of var inputs in the document, but is show in the red border. Must be shown outside.
+- cursor arrowed right in var must be visible 
+- cursor sometimes gets lost
+- BSP above DeclarationAssignment does nothing
+- BSP above 
+
+  With whitespaces, editing with mouse and keys is acceptable for now. Help from Joe?
+
+
+Concepts to make
+================
+
+- actions: make html tags concepts

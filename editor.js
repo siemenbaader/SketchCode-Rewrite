@@ -37,85 +37,6 @@
   
   HTMLCollection.prototype.map = Array.prototype.map;
 
-  var Comment = {
-    match_text: "comment",
-    menu_view: "<comment>Comment </comment>    <span class='type'>  Comment</span>",
-    Entity: function() {
-      var e = {};
-      e.view = $("<comment contenteditable='false'><b>// Comment</b><hr/> <field contenteditable='true'/><br></comment>")[0];
-      e.view.setAttribute('to_js', 'function() {\
-        var field = $(e.view).find("field")[0];\
-        return "/*" + field.innerText + "*/";\
-      }')
-      e.view.to_constructor = function() { return 'Comment.Entity("foo").view' };
-      return e;
-    }
-  }
-
-
-  var DeclarationAssignment = {
-    match_text: "var",
-    menu_view: "<b>var</b> <field/> <b>=</b> <field/><b>;</b><span class='type'>  Declaration-Assignment</span>",
-    Entity: function (name, value) {
-      var e = {};
-      if (!name) name = '';
-      if (!value) value = '';
-      
-      e.fields  = [name , value];
-      e.view    = $("<declaration-assignment contenteditable='false'><b>var</b> <field name='name' contenteditable='true'>" + name + "</field> <b>=</b> <field name='value' contenteditable='true'>" + value + "</field><b>;</b></declaration-assignment>")[0];
-      
-      e.view.to_js = e.to_js   = function() {
-        var fields = $(e.view).find("field");
-        // TODO: Now I just need to find a cleaner model of recursive to_js in everything that is inserted into the editor. no innerText
-        return "var " + fields[0].to_js() + " = " + fields[1].to_js() + ";";
-      };
-      e.view.onclick = function() { IntentionInteractionWindowEditor( e.view ) };
-      e.view.to_constructor = function() {
-	var fields = $(e.view).find("field");
-	return 'DeclarationAssignment.Entity("'+ fields[0].innerText + '","' + fields[1].innerText + '").view';   };
-      
-      return e;
-    }
-  };
-
-  //TODO: make the views work with the cursor when they are plain text nodes; doc fragment etc so we can insert more lo-fi things as well
-  var VarText = {
-    match_text: "var",
-    menu_view: 'var<span class="type">         text</span>',
-    Entity: function() { 
-      var e = {};
-      e.fields = [];
-      e.view = document.createTextNode('var');
-      e.view.to_js = function () { return 'var' };
-      return e;
-//       {
-//         fields: [],
-//         view: document.createTextNode('var') //,
-// //         to_javascript: function() { return "var"; }
-//       };
-    }
-  }
-
-var Fun =  {
-  match_text: "function",
-  menu_view: '<function><b>function</b> <field>&#160;</field>(<field>arg</field>) {<layouter contenteditable="true"><br>&#160;\n        </layouter>        <field contenteditable="true"> &#160; </field><br> }</function>',
-  Entity: function() {
-    var e = {};
-
-    e.fields = ['name', 'arguments', 'body'];
-
-    e.view = $("<function contenteditable='false'><b>function</b><field contenteditable='true'/>(<field contenteditable='true'/>) {<layouter contenteditable='true'><br>&#160;\n        </layouter>\n        <field contenteditable='true'/><br> }</function>" )[0];
-
-    e.view.to_js = function() { 
-      var fields = $(e.view).find("field");
-      return "function " + fields[0].to_js() + "( " + fields[1].to_js() +" ) {\n  " + fields[2].to_js() + "\n}";
-    }
-
-
-    return e;
-  }
-}
-
 
   function AutocompletionMenu(choices) {
 
@@ -201,6 +122,14 @@ var Fun =  {
       rangy.restoreSelection(saved_sel);
       return offset;
     };
+
+    self.doWithDomNeedle = function( lambda ){
+      var saved_sel = rangy.saveSelection();
+      if (saved_sel.rangeInfos[0].collapsed) {
+        lambda( document.getElementById(saved_sel.rangeInfos[0].markerId));
+      }
+      rangy.restoreSelection(saved_sel);      
+    }  
 
     self.word_under_range = function() {
 
@@ -324,6 +253,7 @@ var Fun =  {
           event.preventDefault();
           return;
         }
+
         if (["Left", "Right", "Up", "Down"].includes(event.keyIdentifier)) {
           return;
         }
@@ -389,7 +319,39 @@ var Fun =  {
     self.mode = normal_mode;
 
     self.onkeydown = function (event) {
+      var should_terminate = false;
+
+      if (event.keyIdentifier === 'U+0008') {  //Backspace
+        // if inside content_editable field && cursor.leftMost && parent is not contenteditable (or inherited not editable)
+          // just beep
+
+        cursor.doWithDomNeedle( function(needle){
+          var field = $(needle).parent();
+          field.get(0).normalize();
+          // If needle is the first child of field
+          if( field.contents()[0] === needle ) {
+            event.preventDefault();
+            beep(field[0]);
+            should_terminate = true;
+          }
+        } )
+
+      } else if (event.keyIdentifier === 'U+007F') {  //DEL
+        
+        cursor.doWithDomNeedle( function(needle){
+          var field = $(needle).parent();
+          field.get(0).normalize();
+          // If needle is the first child of field
+          if( _(field.contents()).last() === needle ) {
+            event.preventDefault();
+            beep(field.get(0));
+            should_terminate = true;
+          }
+        } )
+      } 
       
+      if( should_terminate) { return; }
+
 /*      if (event.keyIdentifier === "Enter" && event.ctrlKey) {
         eval(self.to_js());
         event.preventDefault();

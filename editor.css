@@ -1,6 +1,6 @@
 /* The black editing component */
 
-editor {color: white; font-family: monospace; padding: 5px; margin: 0; font-weight: bold; height: 100%; } 
+editor {color: white; font-family: monospace; padding: 5px; margin: 0; height: 100%; } 
 editor { display: block; position: relative; background-color: black; width: auto; }
 
 /* what here? */
@@ -35,3 +35,7 @@ field.blank { background-color: #BCF; width: 0.5em; }
 layouter { /*background-color: red;*/ }
 cursor { color: red; }
 comment { background-color: #3B3; display: inline-block; border: 1px solid black;  border-radius: 3px; }
+
+
+* [contenteditable='true'] { display: inline-block; min-width: 5px; }
+* [contenteditable='true']:hover { outline: 1px solid blue; }
