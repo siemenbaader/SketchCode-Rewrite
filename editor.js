@@ -113,12 +113,12 @@
 
     self.position = function() {
       // this needle stuff will go away when the curser itself becomes a DOM element
-      var needle = $("<span/>")
+      var needle = $("<span data-note='needle' />")
       var saved_sel = rangy.saveSelection();
       
       document.getSelection().getRangeAt(0).insertNode( needle[0] );
       var offset = needle.offset();
-      
+      needle.remove();
       rangy.restoreSelection(saved_sel);
       return offset;
     };
@@ -166,7 +166,7 @@
     };
 
     self.insert_left = function( element ) {
-      var needle = $("<span/>")[0];
+      var needle = $("<span data-note='needle'/>")[0];
 
       self.dom_range().insertNode( needle );
 
@@ -321,9 +321,10 @@
     self.onkeydown = function (event) {
       var should_terminate = false;
 
-      if (event.keyIdentifier === 'U+0008') {  //Backspace
-        // if inside content_editable field && cursor.leftMost && parent is not contenteditable (or inherited not editable)
-          // just beep
+
+      if (event.keyIdentifier === 'U+0008') {
+        // Backspace inside content_editable field && cursor.leftMost in a the field 
+        // -> just beep the input field
 
         cursor.doWithDomNeedle( function(needle){
           var field = $(needle).parent();
@@ -335,6 +336,40 @@
             should_terminate = true;
           }
         } )
+        if( should_terminate) { return; } // No more key actions
+
+        // ---------------
+        // If right of a concept && no selection, select the concept
+        var sel = rangy.getSelection();
+        var range = sel.getRangeAt(0);
+
+        if (range.collapsed ) {
+          var concept = null;
+          var foundConcept = false;
+
+          cursor.doWithDomNeedle( function(needle){
+            var children = $(needle).parent().contents();
+            var i = children.index( needle );
+            var leftIndex = i - 1;
+
+            if( $(children[leftIndex]).is('concept') ) {
+              concept = children[leftIndex];
+              foundConcept = true;
+            }
+          })
+          // removes DOM markers
+
+          if (foundConcept) {
+            range.selectNode( concept );
+            sel.setSingleRange( range );
+            event.preventDefault();
+            return;
+          }
+        }
+
+        // if a selection: just remove it (implemented by the browser)
+
+
 
       } else if (event.keyIdentifier === 'U+007F') {  //DEL
         
@@ -348,10 +383,10 @@
             should_terminate = true;
           }
         } )
+        if( should_terminate) { return; } // No more key actions
       } 
       
-      if( should_terminate) { return; }
-
+      
 /*      if (event.keyIdentifier === "Enter" && event.ctrlKey) {
         eval(self.to_js());
         event.preventDefault();

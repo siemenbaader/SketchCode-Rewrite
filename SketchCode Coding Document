@@ -19,7 +19,7 @@ Actions
     - in menu mode, backspace & DEL mustrespect fields as well  OK
     - DEL & BSP outside a concept & no selection must select it
       - then, del & BSP will just remove it
-
+    - cursor must move outside the concept element on selection end
     - clean up the visuals of TAG & refactor the Concept CSS
 
 
