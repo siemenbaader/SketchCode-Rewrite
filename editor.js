@@ -196,6 +196,45 @@
       sel.addRange( r ); // maybe this is not executed immediately; rangeCount === 0 after..
     };
 
+    self.isNeedle = function() {
+      var sel = rangy.getSelection();
+      var range = sel.getRangeAt(0);
+      return range.collapsed;
+    };
+
+    self.prevElement = function() {
+      var theElement;
+
+      self.doWithDomNeedle( function(needle){
+        var children = $(needle).parent().contents();
+        var i = children.index( needle );
+        var leftIndex = i - 1;
+        theElement = children[ leftIndex ];
+      });
+
+      return theElement;
+    };
+
+    self.nextElement = function() {
+      var theElement;
+
+      self.doWithDomNeedle( function(needle){
+        var children = $(needle).parent().contents();
+        var i = children.index( needle );
+        var rightIndex = i + 1;
+        theElement = children[ rightIndex ];
+      });
+
+      return theElement;
+    };
+
+
+    self.selectElement = function( element ) {
+      var r = rangy.createRange();
+      r.selectNode( element );
+      rangy.getSelection().setSingleRange(r);
+    };
+
     
   //   self.move_inside = function( element ) {
   //     var sel = document.getSelection();
@@ -340,32 +379,14 @@
 
         // ---------------
         // If right of a concept && no selection, select the concept
-        var sel = rangy.getSelection();
-        var range = sel.getRangeAt(0);
 
-        if (range.collapsed ) {
-          var concept = null;
-          var foundConcept = false;
-
-          cursor.doWithDomNeedle( function(needle){
-            var children = $(needle).parent().contents();
-            var i = children.index( needle );
-            var leftIndex = i - 1;
-
-            if( $(children[leftIndex]).is('concept') ) {
-              concept = children[leftIndex];
-              foundConcept = true;
-            }
-          })
-          // removes DOM markers
-
-          if (foundConcept) {
-            range.selectNode( concept );
-            sel.setSingleRange( range );
-            event.preventDefault();
-            return;
-          }
+        if( cursor.isNeedle() && $(cursor.prevElement()).is('concept')) {
+          cursor.selectElement( cursor.prevElement() )
+          event.preventDefault();
+          return;
         }
+
+
 
         // if a selection: just remove it (implemented by the browser)
 
@@ -384,6 +405,14 @@
           }
         } )
         if( should_terminate) { return; } // No more key actions
+
+        // If BSP before a concept, select it
+        if( cursor.isNeedle() && $(cursor.nextElement()).is('concept')) {
+          cursor.selectElement( cursor.nextElement() )
+          event.preventDefault();
+          return;
+        }
+
       } 
       
       
