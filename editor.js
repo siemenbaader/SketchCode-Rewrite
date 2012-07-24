@@ -202,6 +202,14 @@
       return range.collapsed;
     };
 
+    self.at_end_of_container = function() {
+      var state;
+      self.doWithDomNeedle( function(needle) {
+        state = $(needle).parent().contents().last()[0] === needle;
+      });
+      return state;
+    }
+
     self.prevElement = function() {
       var theElement;
 
@@ -286,25 +294,16 @@
     
     var normal_mode = {
       onkeydown: function(event) {
+
         if (event.keyIdentifier === "Enter") {
-          var count;
-          cursor.doWithDomNeedle( function(needle) {
-            $(needle).parent().contents();
-
-            if($(needle).parent().contents().last()[0] === needle ) {
-              count = 2;
-            } else {
-              count = 1;
-            }
-
-          });
-          if (count === 1) {
+          // Browser requires two BR elements to display a line feed after the final element in a container
+          if ( cursor.at_end_of_container() ) {
+            cursor.insert_left( document.createElement('br'));
             cursor.insert_left( document.createElement('br'));
           } else {
             cursor.insert_left( document.createElement('br'));
-            cursor.insert_left( document.createElement('br'));
           }
-   
+
           event.preventDefault();
           return;
         }
