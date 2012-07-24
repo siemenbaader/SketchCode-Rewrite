@@ -39,3 +39,4 @@ comment { background-color: #3B3; display: inline-block; border: 1px solid black
 
 * [contenteditable='true'] { display: inline-block; min-width: 5px; }
 * [contenteditable='true']:hover { outline: 1px solid blue; }
+concept { vertical-align: top; display: inline-block; }

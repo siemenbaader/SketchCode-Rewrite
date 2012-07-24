@@ -17,11 +17,13 @@ Actions
     - BSP on empty line must remove line break & go up to prev line  OK
     - DEL at end of field must not go into next field OK
     - in menu mode, backspace & DEL mustrespect fields as well  OK
-    - DEL & BSP outside a concept & no selection must select it
-      - then, del & BSP will just remove it
-    - cursor must move outside the concept element on selection end
-    - clean up the visuals of TAG & refactor the Concept CSS
+    - DEL & BSP outside a concept & no selection must select it  OK
+      - then, del & BSP will just remove it 					OK
+    - cursor must move outside the concept element on selection end OK
 
+    - make nested tags fold properly according to body content  OK
+    - make DEL & BSP aware of BR elements
+    - fix BR insertion mash
 
   - arrow key navigation & columns
     - selection should not be able to leave an editable field

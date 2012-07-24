@@ -326,9 +326,7 @@
 
         if (event.keyIdentifier === "Enter") { 
           cursor.delete_current_word();
-	  cursor.insert_left( document.createTextNode("\u00a0") );
           cursor.insert_left( menu.choice().view );
-	  cursor.insert_left( document.createTextNode("\u00a0") );
 	  
           event.preventDefault();
           

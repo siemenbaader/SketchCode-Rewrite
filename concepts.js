@@ -20,26 +20,16 @@ DocType = {
 
 }
 
-// - expel to HTML file (more overview)
-// - code function handlers into HTML
-// - use 'this' reference to get data
-//   - use data-id tags to ID elements with data
-
-// - Knockout offers: 
-//   - partial update
-//   - massive data collection MODEL
-//   - to solve: how to bind locally
-
-
-
 function check_body(event) {
-  var self_jq = $(event.srcElement).parents('.tag').first();
-  var b = self_jq.children('[data-id=body]').first();
+  var self = $(event.srcElement).parents('concept').first();
+  var body = self.find('[data-id=body]').first();
 
-  if (_(b[0].childNodes).find( function(it){ return it.nodeName === 'BR' } )) {
-    b.addClass( 'block');
-  } else {
-    b.removeClass( 'block');
+  if (body.height() > 20) {body.addClass('block')} else { body.removeClass('block')}
+  
+
+  if(f = self.parents('concept.html-tag')[0]) {
+    var carrierEvent = { srcElement: self.parents('concept.html-tag').find('[data-id=body]')[0] };
+    check_body( carrierEvent );
   }
 }
 
