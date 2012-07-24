@@ -286,9 +286,25 @@
     
     var normal_mode = {
       onkeydown: function(event) {
-        if (event.keyIdentifier === "Enter") { 
-          var br = document.createElement('br');
-          cursor.insert_left( br );
+        if (event.keyIdentifier === "Enter") {
+          var count;
+          cursor.doWithDomNeedle( function(needle) {
+            $(needle).parent().contents();
+
+            if($(needle).parent().contents().last()[0] === needle ) {
+              count = 2;
+            } else {
+              count = 1;
+            }
+
+          });
+          if (count === 1) {
+            cursor.insert_left( document.createElement('br'));
+          } else {
+            cursor.insert_left( document.createElement('br'));
+            cursor.insert_left( document.createElement('br'));
+          }
+   
           event.preventDefault();
           return;
         }
@@ -426,12 +442,12 @@
         // ensure there is always a br at the end of the contenteditable -
         // BRs only behave consistently if therea are at least two vetically
       
-        if(_.last( code_editor.childNodes ).tagName !== 'br') {
-          l('added br');
-          var br = document.createElement('br');
-          br.setAttribute( '_spacer', '')
-          code_editor.appendChild( br );
-        }
+        // if(_.last( code_editor.childNodes ).tagName !== 'br') {
+        //   l('added br');
+        //   var br = document.createElement('br');
+        //   br.setAttribute( '_spacer', '')
+        //   code_editor.appendChild( br );
+        // }
 
         // normalize text nodes that for obscure reasons create double content...
         self.normalize();

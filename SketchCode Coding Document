@@ -24,6 +24,7 @@ Actions
     - make nested tags fold properly according to body content  OK
     - make DEL & BSP aware of BR elements
     - fix BR insertion mash
+    - track down bug: DEL in field that has a non-displayed last element (eg SPC or BR) moves cur out of field.
 
   - arrow key navigation & columns
     - selection should not be able to leave an editable field
