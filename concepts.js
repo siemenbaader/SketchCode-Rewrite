@@ -21,16 +21,19 @@ DocType = {
 }
 
 function check_body(event) {
-  var self = $(event.srcElement).parents('concept').first();
-  var body = self.find('[data-id=body]').first();
+  window.setTimeout( function(){
 
-  if (body.height() > 20) {body.addClass('block')} else { body.removeClass('block')}
-  
+    var self = $(event.srcElement).parents('concept').first();
+    var body = self.find('[data-id=body]').first();
 
-  if(f = self.parents('concept.html-tag')[0]) {
-    var carrierEvent = { srcElement: self.parents('concept.html-tag').find('[data-id=body]')[0] };
-    check_body( carrierEvent );
-  }
+    if (body.height() > 20) {body.addClass('block')} else { body.removeClass('block')}
+    
+
+    if(f = self.parents('concept.html-tag')[0]) {
+      var carrierEvent = { srcElement: self.parents('concept.html-tag').find('[data-id=body]')[0] };
+      check_body( carrierEvent );
+    }
+  }, 0);
 }
 
 function focus_open_tag(event) {

@@ -243,18 +243,7 @@
       rangy.getSelection().setSingleRange(r);
     };
 
-    
-  //   self.move_inside = function( element ) {
-  //     var sel = document.getSelection();
-  //     var r = sel.getRangeAt(0);
-  //     r.setStart( element, 0 );
-  //     r.setEnd( element, 0 );
-  //     sel.removeAllRanges();
-  //     sel.addRange( r );
-  //   };
-
     return self;
-
   }
 
   function Editor( self, intentions ) {
@@ -410,8 +399,11 @@
         cursor.doWithDomNeedle( function(needle){
           var field = $(needle).parent();
           field.get(0).normalize();
-          // If needle is the first child of field
-          if( _(field.contents()).last() === needle ) {
+
+          // If needle is the last child of field, or if there is a (non-displayed) BR after the cursor needle
+          var tail = _(field.contents()).slice(-2);
+
+          if(( _(field.contents()).last() === needle ) || (tail[0] === needle & tail[1].tagName === 'BR')){
             event.preventDefault();
             beep(field.get(0));
             should_terminate = true;
@@ -428,29 +420,11 @@
 
       } 
       
-      
-/*      if (event.keyIdentifier === "Enter" && event.ctrlKey) {
-        eval(self.to_js());
-        event.preventDefault();
-        return;
-      }*/
       self.mode.onkeydown(event);
 
       
       window.setTimeout( function(){ 
-        // ensure there is always a br at the end of the contenteditable -
-        // BRs only behave consistently if therea are at least two vetically
-      
-        // if(_.last( code_editor.childNodes ).tagName !== 'br') {
-        //   l('added br');
-        //   var br = document.createElement('br');
-        //   br.setAttribute( '_spacer', '')
-        //   code_editor.appendChild( br );
-        // }
-
-        // normalize text nodes that for obscure reasons create double content...
         self.normalize();
-
       }, 0)
 
     };

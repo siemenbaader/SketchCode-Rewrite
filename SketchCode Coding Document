@@ -12,21 +12,20 @@ Capture (unsorted)
 Actions
 =======
 - code editor love:
-  - BSP key in fields
-    - fix selection deletion & first ev  OK
-    - BSP on empty line must remove line break & go up to prev line  OK
-    - DEL at end of field must not go into next field OK
-    - in menu mode, backspace & DEL mustrespect fields as well  OK
-    - DEL & BSP outside a concept & no selection must select it  OK
-      - then, del & BSP will just remove it 					OK
-    - cursor must move outside the concept element on selection end OK
+	- fix selection deletion & first ev            					 OK
+	- BSP on empty line must remove line break & go up to prev line  OK
+	- DEL at end of field must not go into next field 				 OK
+	- in menu mode, backspace & DEL mustrespect fields as well  	 OK
+	- DEL & BSP outside a concept & no selection must select it  	 OK
+	  - then, del & BSP will just remove it 						 OK
+	- cursor must move outside the concept element on selection end  OK
+	- make nested tags fold properly according to body content 		 OK
+	- make DEL & BSP aware of BR elements
+	- fix BR insertion mash 										 OK
+	- track down bug: DEL in field that has a non-displayed last element (eg SPC or BR) moves cursor out of field.													  OK
+	- arrow keys should stop at concept start, and handle BR like regular text editors
+	- cursor must show nicely in-place where typing will happen after arrow navigation
 
-    - make nested tags fold properly according to body content  OK
-    - make DEL & BSP aware of BR elements
-    - fix BR insertion mash
-    - track down bug: DEL in field that has a non-displayed last element (eg SPC or BR) moves cur out of field.
-
-  - arrow key navigation & columns
     - selection should not be able to leave an editable field
 - set up iTerm
 - overview of jQuery (briefly)
